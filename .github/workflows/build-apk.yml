@@ -16,32 +16,33 @@ jobs:
         with:
           node-version: 20
 
-- name: Install Capacitor
-  run: |
-    npm init -y
-    npm install @capacitor/core @capacitor/cli @capacitor/android
-    npm install -D typescript
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
 
-      - name: Create Capacitor config
+      - name: Install Capacitor
         run: |
-          cat > capacitor.config.ts <<'EOF'
-          import type { CapacitorConfig } from '@capacitor/cli';
-
-          const config: CapacitorConfig = {
-            appId: 'com.sandeep.portfolio',
-            appName: 'Sandeep Portfolio',
-            webDir: 'www',
-            server: {
-              url: 'https://sandeep-portfolio-ashy.vercel.app',
-              cleartext: false
-            }
-          };
-
-          export default config;
-          EOF
+          npm init -y
+          npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
 
       - name: Create web directory
         run: mkdir -p www
+
+      - name: Create Capacitor config
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.sandeep.portfolio",
+            "appName": "Sandeep Portfolio",
+            "webDir": "www",
+            "server": {
+              "url": "https://sandeep-portfolio-ashy.vercel.app",
+              "cleartext": false
+            }
+          }
+          EOF
 
       - name: Add Android
         run: npx cap add android
