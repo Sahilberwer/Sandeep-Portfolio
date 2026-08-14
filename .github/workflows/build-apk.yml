@@ -16,10 +16,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Capacitor
-        run: |
-          npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
+- name: Install Capacitor
+  run: |
+    npm init -y
+    npm install @capacitor/core @capacitor/cli @capacitor/android
+    npm install -D typescript
 
       - name: Create Capacitor config
         run: |
