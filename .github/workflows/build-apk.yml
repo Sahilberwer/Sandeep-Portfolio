@@ -1,0 +1,58 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Capacitor
+        run: |
+          npm init -y
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+
+      - name: Create Capacitor config
+        run: |
+          cat > capacitor.config.ts <<'EOF'
+          import type { CapacitorConfig } from '@capacitor/cli';
+
+          const config: CapacitorConfig = {
+            appId: 'com.sandeep.portfolio',
+            appName: 'Sandeep Portfolio',
+            webDir: 'www',
+            server: {
+              url: 'https://sandeep-portfolio-ashy.vercel.app',
+              cleartext: false
+            }
+          };
+
+          export default config;
+          EOF
+
+      - name: Create web directory
+        run: mkdir -p www
+
+      - name: Add Android
+        run: npx cap add android
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sandeep-Portfolio-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
